@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notruf Sender</title>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<style>
+body { background:#111; color:white; font-family:sans-serif; padding:20px; }
+button { padding:20px; border-radius:10px; background:#b30000; color:white; border:none; font-size:18px; }
+select { width:100%; padding:12px; margin:10px 0; }
+</style>
+</head>
+<body>
+<h1>Notruf auslösen</h1>
+<label>Abteilung</label>
+<select id="ort">
+<option>Zuschnitt</option>
+<option>Schleiferei</option>
+<option>ESG-Ofen</option>
+<option>Forel</option>
+</select>
+<label>Notfall</label>
+<select id="verletzung">
+<option>Sturz</option>
+<option>Schnitt / Blutung</option>
+<option>Bewusstlosigkeit</option>
+<option>Atemnot</option>
+</select>
+<button onclick="sende()">HILFE RUFEN</button>
+<p id="status"></p>
+<script>
+async function sende() {
+  const ort = document.getElementById("ort").value;
+  const art = document.getElementById("verletzung").value;
+  const zeit = new Date().toLocaleTimeString();
+  document.getElementById("status").innerText = "Sende…";
+  await fetch("http://localhost:3000/send", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      title: "🚨 INTERNER NOTRUF",
+      body: `Abteilung: ${ort}\nNotfall: ${art}\nZeit: ${zeit}`
+    })
+  });
+  document.getElementById("status").innerText = "Gesendet ✓";
+}
+</script>
+</body>
+</html>

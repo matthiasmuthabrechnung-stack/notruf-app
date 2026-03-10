@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notruf Monitor</title>
+<link rel="manifest" href="manifest.json">
+<style>
+body { background:#111; color:white; font-family:sans-serif; padding:20px; }
+#msg { margin-top:40px; font-size:22px; white-space:pre-line; }
+</style>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-compat.js"></script>
+</head>
+<body>
+<h1>Notruf Monitor</h1>
+<p>Status: <span id="status">Verbinde…</span></p>
+<div id="msg">Kein Notruf empfangen…</div>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyDVFWBprRzsM_SbQ2kTVfOEu0KZF5K77x4",
+  authDomain: "interner-notruf.firebaseapp.com",
+  projectId: "interner-notruf",
+  storageBucket: "interner-notruf.firebasestorage.app",
+  messagingSenderId: "1012047231256",
+  appId: "1:1012047231256:web:4ab44e4e95410f8255066d"
+};
+firebase.initializeApp(firebaseConfig);
+const messaging = firebase.messaging();
+messaging.getToken({
+  vapidKey: "BPUEN5DRb87-1R2M-fbe-0JFtt2Af4Zyi9SrFk3ZYyhsI9STi7b90oE9VY4t4vcNHEyih2865_oyP-tyToGFusc"
+})
+.then(token => {
+  document.getElementById("status").innerText = "Bereit ✓";
+  console.log("Monitor Token:", token);
+})
+.catch(err => {
+  document.getElementById("status").innerText = "Fehler bei Push-Freigabe";
+  console.error(err);
+});
+messaging.onMessage((payload) => {
+  document.getElementById("msg").innerText =
+    payload.notification.title + "\n\n" +
+    payload.notification.body;
+  new Audio("https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg").play();
+});
+</script>
+</body>
+</html>
